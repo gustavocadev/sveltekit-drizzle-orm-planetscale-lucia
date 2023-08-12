@@ -1,9 +1,9 @@
 import type { PageServerLoad } from './$types';
 
 export const load = (async ({ locals }) => {
-	const { user } = await locals.auth.validateUser();
+	const session = await locals.auth.validate();
 
 	return {
-		user
+		session
 	};
 }) satisfies PageServerLoad;

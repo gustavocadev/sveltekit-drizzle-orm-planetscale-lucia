@@ -7,7 +7,7 @@ import { superValidate } from 'sveltekit-superforms/server';
 
 export const load = (async ({ locals }) => {
 	// let's get the session from the locals
-	const { session } = await locals.auth.validateUser();
+	const session = await locals.auth.validate();
 
 	if (!session) {
 		return {};
@@ -35,7 +35,10 @@ export const actions = {
 			// console.log({key})
 
 			// to create a session we need the pass the userId which is the id of the user in the database
-			const session = await auth.createSession(key.userId);
+			const session = await auth.createSession({
+				userId: key.userId,
+				attributes: {}
+			});
 			// console.log({session});
 
 			// now let's set the session so we can get the session everywhere in server like this page

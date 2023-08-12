@@ -1,9 +1,10 @@
-import { fail, type Actions, redirect } from '@sveltejs/kit';
+import { fail, redirect } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
 import { auth } from '$lib/server/lucia';
+import type { Actions } from '@sveltejs/kit';
 
 export const load = (async ({ locals }) => {
-	const { session } = await locals.auth.validateUser();
+	const session = await locals.auth.validate();
 
 	if (!session) throw redirect(303, '/login');
 
@@ -12,7 +13,7 @@ export const load = (async ({ locals }) => {
 
 export const actions = {
 	logout: async ({ locals }) => {
-		const { session } = await locals.auth.validateUser();
+		const session = await locals.auth.validate();
 
 		if (!session) return fail(401);
 

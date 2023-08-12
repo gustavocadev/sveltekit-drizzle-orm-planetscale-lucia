@@ -1,27 +1,22 @@
 import { planetscale } from '@lucia-auth/adapter-mysql';
-import lucia from 'lucia-auth';
-import { sveltekit } from 'lucia-auth/middleware';
-import { connect } from '@planetscale/database';
-import { drizzle } from 'drizzle-orm/planetscale-serverless';
+import { lucia } from 'lucia';
+import { sveltekit } from 'lucia/middleware';
 import { dev } from '$app/environment';
-import { DATABASE_URL } from '$env/static/private';
-
-export const connection = connect({
-	url: DATABASE_URL
-});
-
-export const db = drizzle(connection);
+import { connection } from '$lib/db';
 
 export const auth = lucia({
-	adapter: planetscale(connection),
+	adapter: planetscale(connection, {
+		key: 'user_key',
+		session: 'user_session',
+		user: 'auth_user'
+	}),
 	env: dev ? 'DEV' : 'PROD',
-	middleware: sveltekit(),
-	transformDatabaseUser: (user) => ({
-		userId: user.id,
-		username: user.username,
-		names: user.names,
-		last_names: user.last_names
-	})
+	getUserAttributes: (userData) => ({
+		username: userData.username,
+		names: userData.names,
+		last_names: userData.last_names
+	}),
+	middleware: sveltekit()
 });
 
 export type Auth = typeof auth;
