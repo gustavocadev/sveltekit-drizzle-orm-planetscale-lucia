@@ -65,5 +65,5 @@
 		/>
 	</div>
 
-	<button class="btn mt-4 max-w-xs" type="submit">Crear cuenta</button>
+	<button class="btn mt-4 max-w-xs btn-primary" type="submit">Crear cuenta</button>
 </form>
