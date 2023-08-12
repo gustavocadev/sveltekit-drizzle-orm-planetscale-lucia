@@ -14,7 +14,7 @@ DATABASE_URL='mysql://86bh6kqdbfmqndt0bimw:********************@aws.connect.psdb
 pnpm install
 ```
 
-## Run Drizzle Kit
+## Run Drizzle Kit to sincronize the schema with the planetScale database
 
 ```bash
 pnpm db:push
