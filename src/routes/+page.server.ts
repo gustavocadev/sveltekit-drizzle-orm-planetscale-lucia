@@ -6,7 +6,7 @@ import type { Actions } from '@sveltejs/kit';
 export const load = (async ({ locals }) => {
 	const session = await locals.auth.validate();
 
-	if (!session) throw redirect(303, '/login');
+	if (!session) redirect(303, '/login');
 
 	return {};
 }) satisfies PageServerLoad;
@@ -24,6 +24,6 @@ export const actions = {
 		locals.auth.setSession(null);
 
 		// next we redirect to the login page
-		throw redirect(303, '/login');
+		redirect(303, '/login');
 	}
 } satisfies Actions;

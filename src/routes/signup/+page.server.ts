@@ -18,7 +18,7 @@ export const load = (async ({ locals }) => {
 
 	if (!session) return {};
 
-	throw redirect(303, '/');
+	redirect(303, '/');
 }) satisfies PageServerLoad;
 
 export const actions = {
@@ -57,6 +57,6 @@ export const actions = {
 			console.error(error);
 			return fail(400);
 		}
-		throw redirect(303, '/login');
+		redirect(303, '/login');
 	}
 } satisfies Actions;
