@@ -1,10 +1,22 @@
-<script>
-	import { enhance } from '$app/forms';
+<script lang="ts">
+	import { applyAction, enhance } from '$app/forms';
+	import type { SubmitFunction } from '@sveltejs/kit';
+
+	let isLoadingSignIn = false;
+
+	const handleSubmit: SubmitFunction = () => {
+		isLoadingSignIn = true;
+
+		return async ({ result }) => {
+			await applyAction(result);
+			isLoadingSignIn = false;
+		};
+	};
 </script>
 
 <form
 	class="bg-base-200 flex justify-center items-center flex-col max-w-sm mx-auto mt-20 py-6 rounded-lg"
-	use:enhance
+	use:enhance={handleSubmit}
 	action="?/login"
 	method="post"
 >
@@ -36,7 +48,13 @@
 		/>
 	</div>
 
-	<button class="btn mt-4 max-w-xs btn-primary" type="submit">Iniciar Sesion</button>
+	<button class="btn mt-4 max-w-xs btn-primary" type="submit" disabled={isLoadingSignIn}>
+		{#if isLoadingSignIn}
+			<span class="loading loading-spinner loading-sm" />
+		{:else}
+			Iniciar Sesion
+		{/if}
+	</button>
 
 	<p class="pt-4">
 		Dont have an account? <a href="/signup" class="link link-hover font-semibold">Register</a>.
