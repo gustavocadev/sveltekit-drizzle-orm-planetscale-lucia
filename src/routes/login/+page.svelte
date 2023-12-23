@@ -8,8 +8,11 @@
 		isLoadingSignIn = true;
 
 		return async ({ result }) => {
+			if (result.type === 'error') {
+				isLoadingSignIn = false;
+				return;
+			}
 			await applyAction(result);
-			isLoadingSignIn = false;
 		};
 	};
 </script>
