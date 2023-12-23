@@ -19,27 +19,27 @@
 		"@sveltejs/kit": "^2.0.0",
 		"@sveltejs/vite-plugin-svelte": "^3.0.0",
 		"autoprefixer": "^10.4.14",
-		"daisyui": "^3.5.1",
+		"daisyui": "^4.4.23",
 		"dotenv": "^16.3.1",
-		"drizzle-kit": "^0.19.12",
+		"drizzle-kit": "^0.19.13",
 		"postcss": "^8.4.24",
 		"postcss-load-config": "^4.0.1",
 		"prettier": "^2.8.0",
 		"prettier-plugin-svelte": "^2.10.1",
-		"svelte": "^4.0.5",
+		"svelte": "^4.2.8",
 		"svelte-check": "^3.4.3",
-		"sveltekit-superforms": "^1.5.1",
-		"tailwindcss": "^3.3.3",
+		"sveltekit-superforms": "^1.13.1",
+		"tailwindcss": "^3.4.0",
 		"tslib": "^2.4.1",
-		"typescript": "^5.1.6",
-		"vite": "^5.0.0",
-		"zod": "^3.21.4"
+		"typescript": "^5.3.3",
+		"vite": "^5.0.10",
+		"zod": "^3.22.4"
 	},
 	"type": "module",
 	"dependencies": {
-		"@lucia-auth/adapter-mysql": "^2.0.0",
-		"@planetscale/database": "1.10.0",
-		"drizzle-orm": "^0.28.2",
-		"lucia": "^2.2.0"
+		"@lucia-auth/adapter-mysql": "^2.1.0",
+		"@planetscale/database": "1.13.0",
+		"drizzle-orm": "^0.28.6",
+		"lucia": "^2.7.6"
 	}
 }
