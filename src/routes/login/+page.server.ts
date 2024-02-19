@@ -1,15 +1,18 @@
 import type { Actions } from '@sveltejs/kit';
-import { auth } from '$lib/server/lucia';
+import { lucia } from '$lib/server/lucia';
 import { fail, redirect } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
 import { z } from 'zod';
 import { superValidate } from 'sveltekit-superforms/server';
+import { zod } from 'sveltekit-superforms/adapters';
+import { db } from '$lib/drizzle/db';
+import { userTable } from '$lib/drizzle/schema';
+import { eq } from 'drizzle-orm';
+import { Argon2id } from 'oslo/password';
 
 export const load = (async ({ locals }) => {
 	// let's get the session from the locals
-	const session = await locals.auth.validate();
-
-	if (!session) {
+	if (!locals.session) {
 		return {};
 	}
 
@@ -22,8 +25,8 @@ const loginSchema = z.object({
 });
 
 export const actions = {
-	login: async ({ request, locals }) => {
-		const form = await superValidate(request, loginSchema);
+	login: async ({ request, cookies }) => {
+		const form = await superValidate(request, zod(loginSchema));
 
 		if (!form.valid) {
 			return fail(400, {
@@ -31,18 +34,33 @@ export const actions = {
 			});
 		}
 		try {
-			const key = await auth.useKey('username', form.data.username, form.data.password);
-			// console.log({key})
+			const { password, username } = form.data;
 
-			// to create a session we need the pass the userId which is the id of the user in the database
-			const session = await auth.createSession({
-				userId: key.userId,
-				attributes: {}
+			// 1. get the user from the database
+			const [user] = await db.select().from(userTable).where(eq(userTable.username, username));
+
+			// 2. check if the user exists
+			if (!user) {
+				return fail(400, {
+					msg: 'Invalid username or password'
+				});
+			}
+
+			// 3. check if the password is correct
+			const isValidPassword = await new Argon2id().verify(user.passwordHash, password);
+			if (!isValidPassword) {
+				return fail(400, {
+					msg: 'Invalid username or password'
+				});
+			}
+
+			// 4. create a session
+			const session = await lucia.createSession(user.id, {});
+			const sessionCookie = lucia.createSessionCookie(session.id);
+			cookies.set(sessionCookie.name, sessionCookie.value, {
+				path: '.',
+				...sessionCookie.attributes
 			});
-			// console.log({session});
-
-			// now let's set the session so we can get the session everywhere in server like this page
-			locals.auth.setSession(session);
 		} catch (error) {
 			console.error(error);
 			return fail(400);

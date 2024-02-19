@@ -1,22 +1,27 @@
-import { planetscale } from '@lucia-auth/adapter-mysql';
-import { lucia } from 'lucia';
-import { sveltekit } from 'lucia/middleware';
+import { DrizzleMySQLAdapter } from '@lucia-auth/adapter-drizzle';
+import { Lucia } from 'lucia';
 import { dev } from '$app/environment';
-import { connection } from '$lib/db';
+import { userTable, type SelectUser, sessionTable } from '$lib/drizzle/schema';
+import { db } from '$lib/drizzle/db';
 
-export const auth = lucia({
-	adapter: planetscale(connection, {
-		key: 'user_key',
-		session: 'user_session',
-		user: 'auth_user'
-	}),
-	env: dev ? 'DEV' : 'PROD',
-	getUserAttributes: (userData) => ({
-		username: userData.username,
-		names: userData.names,
-		last_names: userData.last_names
-	}),
-	middleware: sveltekit()
+const adapter = new DrizzleMySQLAdapter(db, sessionTable, userTable);
+
+export const lucia = new Lucia(adapter, {
+	sessionCookie: {
+		attributes: {
+			secure: !dev
+		}
+	},
+	getUserAttributes: (attributes) => {
+		return {
+			username: attributes.username
+		};
+	}
 });
 
-export type Auth = typeof auth;
+declare module 'lucia' {
+	interface Register {
+		Lucia: typeof lucia;
+		DatabaseUserAttributes: Omit<SelectUser, 'id'>;
+	}
+}

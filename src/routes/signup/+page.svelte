@@ -18,7 +18,7 @@
 			autocomplete="off"
 			placeholder="Name"
 			class="input input-bordered w-full max-w-xs"
-			name="names"
+			name="firstName"
 			required
 		/>
 
@@ -31,7 +31,7 @@
 			autocomplete="off"
 			placeholder="Name"
 			class="input input-bordered w-full max-w-xs"
-			name="last_names"
+			name="lastName"
 			required
 		/>
 	</div>
